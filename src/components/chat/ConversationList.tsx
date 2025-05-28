@@ -1,3 +1,4 @@
+
 import type { Conversation } from '@/types';
 import { ConversationListItem } from './ConversationListItem';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -28,7 +29,7 @@ export function ConversationList({ conversations, selectedConversationId, onSele
   }
 
   if (conversations.length === 0) {
-    return <p className="p-4 text-center text-muted-foreground">No conversations yet. Start a new one!</p>;
+    return <p className="p-4 text-center text-muted-foreground">Aún no hay conversaciones. ¡Inicia una nueva!</p>;
   }
 
   return (
@@ -46,3 +47,4 @@ export function ConversationList({ conversations, selectedConversationId, onSele
     </ScrollArea>
   );
 }
+    

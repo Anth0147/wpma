@@ -1,3 +1,4 @@
+
 'use client';
 import { useState, type FormEvent } from 'react';
 import { Button } from "@/components/ui/button";
@@ -40,51 +41,51 @@ export function NewConversationModal({ onCreateConversation, disabled }: NewConv
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" className="w-full mt-2 border-primary text-primary hover:bg-primary/10" disabled={disabled}>
-          <PlusCircle size={18} className="mr-2" /> New Conversation
+          <PlusCircle size={18} className="mr-2" /> Nueva Conversación
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Start New Conversation</DialogTitle>
+            <DialogTitle>Iniciar Nueva Conversación</DialogTitle>
             <DialogDescription>
-              Enter the recipient&apos;s name and your first message.
+              Ingresa el nombre del destinatario y tu primer mensaje.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="recipientName" className="text-right">
-                Recipient
+                Destinatario
               </Label>
               <Input
                 id="recipientName"
                 value={recipientName}
                 onChange={(e) => setRecipientName(e.target.value)}
                 className="col-span-3"
-                placeholder="e.g., Bob"
+                placeholder="ej., Ana"
                 required
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="initialMessage" className="text-right">
-                Message
+                Mensaje
               </Label>
               <Textarea
                 id="initialMessage"
                 value={initialMessage}
                 onChange={(e) => setInitialMessage(e.target.value)}
                 className="col-span-3"
-                placeholder="Your initial message..."
+                placeholder="Tu mensaje inicial..."
                 required
               />
             </div>
           </div>
           <DialogFooter>
             <DialogClose asChild>
-                <Button type="button" variant="outline">Cancel</Button>
+                <Button type="button" variant="outline">Cancelar</Button>
             </DialogClose>
             <Button type="submit" className="bg-accent text-accent-foreground hover:bg-accent/90" disabled={!recipientName.trim() || !initialMessage.trim()}>
-              Start Conversation
+              Iniciar Conversación
             </Button>
           </DialogFooter>
         </form>
@@ -92,3 +93,4 @@ export function NewConversationModal({ onCreateConversation, disabled }: NewConv
     </Dialog>
   );
 }
+    

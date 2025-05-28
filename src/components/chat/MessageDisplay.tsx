@@ -1,3 +1,4 @@
+
 'use client';
 import type { Message } from '@/types';
 import { MessageBubble } from './MessageBubble';
@@ -44,7 +45,7 @@ export function MessageDisplay({ messages, isLoading, conversationId }: MessageD
   if (!conversationId) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <p className="text-muted-foreground text-lg">Select a conversation to start chatting.</p>
+        <p className="text-muted-foreground text-lg">Selecciona una conversación para empezar a chatear.</p>
       </div>
     );
   }
@@ -52,7 +53,7 @@ export function MessageDisplay({ messages, isLoading, conversationId }: MessageD
   if (messages.length === 0) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <p className="text-muted-foreground">No messages yet. Send one to start the conversation!</p>
+        <p className="text-muted-foreground">Aún no hay mensajes. ¡Envía uno para iniciar la conversación!</p>
       </div>
     );
   }
@@ -67,3 +68,4 @@ export function MessageDisplay({ messages, isLoading, conversationId }: MessageD
     </ScrollArea>
   );
 }
+    

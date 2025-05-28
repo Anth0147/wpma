@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
@@ -28,9 +29,9 @@ export default function ChatPage() {
       const myConversations = data.filter(convo => convo.participants.includes(MY_USERNAME));
       setConversations(myConversations);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+      const errorMessage = err instanceof Error ? err.message : 'Ocurrió un error desconocido';
       setError(errorMessage);
-      toast({ title: "Error", description: `Failed to load conversations: ${errorMessage}`, variant: "destructive" });
+      toast({ title: "Error", description: `Error al cargar conversaciones: ${errorMessage}`, variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -71,9 +72,9 @@ export default function ChatPage() {
       // For now, optimistic update is fine given the backend might be simple.
       // loadConversations(); // Or update specific conversation
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
-      setError(`Failed to send message: ${errorMessage}`);
-      toast({ title: "Error", description: `Failed to send message: ${errorMessage}`, variant: "destructive" });
+      const errorMessage = err instanceof Error ? err.message : 'Ocurrió un error desconocido';
+      setError(`Error al enviar mensaje: ${errorMessage}`);
+      toast({ title: "Error", description: `Error al enviar mensaje: ${errorMessage}`, variant: "destructive" });
       // Revert optimistic update if needed
       setConversations(prev => prev.map(c => c.id === selectedConversationId ? currentConversation : c));
     }
@@ -81,7 +82,7 @@ export default function ChatPage() {
 
   const handleCreateConversation = async (recipientName: string, initialMessageText: string) => {
     if (recipientName === MY_USERNAME) {
-        toast({ title: "Error", description: "You cannot start a conversation with yourself.", variant: "destructive" });
+        toast({ title: "Error", description: "No puedes iniciar una conversación contigo mismo.", variant: "destructive" });
         return;
     }
 
@@ -91,7 +92,7 @@ export default function ChatPage() {
 
     if (existingConversation) {
         setSelectedConversationId(existingConversation.id);
-        toast({ title: "Info", description: `Conversation with ${recipientName} already exists. Switched to it.`, variant: "default" });
+        toast({ title: "Información", description: `La conversación con ${recipientName} ya existe. Se ha cambiado a ella.`, variant: "default" });
         return;
     }
 
@@ -109,17 +110,14 @@ export default function ChatPage() {
     
     setIsLoading(true);
     try {
-      // The API for createConversation might need an ID or might generate one.
-      // Let's assume it can take an ID, or generates one if not provided.
-      // The api.ts createConversation handles this.
       const createdConvo = await createConversation(newConversationData);
       setConversations(prev => [...prev, createdConvo]);
       setSelectedConversationId(createdConvo.id);
-      toast({ title: "Success", description: `Conversation with ${recipientName} created.`, variant: "default" });
+      toast({ title: "Éxito", description: `Conversación con ${recipientName} creada.`, variant: "default" });
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
-      setError(`Failed to create conversation: ${errorMessage}`);
-      toast({ title: "Error", description: `Failed to create conversation: ${errorMessage}`, variant: "destructive" });
+      const errorMessage = err instanceof Error ? err.message : 'Ocurrió un error desconocido';
+      setError(`Error al crear conversación: ${errorMessage}`);
+      toast({ title: "Error", description: `Error al crear conversación: ${errorMessage}`, variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -132,7 +130,10 @@ export default function ChatPage() {
       <Card className="w-1/3 max-w-sm m-2 rounded-lg shadow-lg flex flex-col border-border overflow-hidden">
         <CardContent className="p-0 flex-grow flex flex-col">
           <div className="p-4 border-b">
-            <h2 className="text-xl font-semibold text-primary">Conversations</h2>
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-semibold text-primary">Conversaciones</h2>
+              <span className="text-sm text-muted-foreground">Usuario: {MY_USERNAME}</span>
+            </div>
           </div>
           <ConversationList
             conversations={conversations}
@@ -153,7 +154,7 @@ export default function ChatPage() {
             {selectedConversationId && conversations.find(c=>c.id === selectedConversationId) ? (
                 <div className="p-4 border-b">
                     <h3 className="text-lg font-medium text-primary">
-                        {conversations.find(c=>c.id === selectedConversationId)?.participants.filter(p => p !== MY_USERNAME).join(', ') || "Conversation"}
+                        {conversations.find(c=>c.id === selectedConversationId)?.participants.filter(p => p !== MY_USERNAME).join(', ') || "Conversación"}
                     </h3>
                 </div>
             ) : null}
@@ -166,3 +167,4 @@ export default function ChatPage() {
     </div>
   );
 }
+    

@@ -1,3 +1,4 @@
+
 'use client';
 import { useState, type FormEvent } from 'react';
 import { Input } from '@/components/ui/input';
@@ -25,18 +26,19 @@ export function MessageInput({ onSendMessage, disabled }: MessageInputProps) {
       <div className="flex items-center space-x-2">
         <Input
           type="text"
-          placeholder="Type a message..."
+          placeholder="Escribe un mensaje..."
           value={messageText}
           onChange={(e) => setMessageText(e.target.value)}
           className="flex-1"
           disabled={disabled}
-          aria-label="Message input"
+          aria-label="Entrada de mensaje"
         />
         <Button type="submit" size="icon" variant="ghost" className="bg-accent text-accent-foreground hover:bg-accent/90" disabled={disabled || !messageText.trim()}>
           <Send size={20} />
-          <span className="sr-only">Send message</span>
+          <span className="sr-only">Enviar mensaje</span>
         </Button>
       </div>
     </form>
   );
 }
+    
