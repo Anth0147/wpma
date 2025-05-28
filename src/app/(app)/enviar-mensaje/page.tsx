@@ -51,10 +51,15 @@ export default function EnviarMensajePage() {
     // Simular carga de sesiones
     const timer = setTimeout(() => {
       setSessions(MOCK_SESSIONS); // Cargar las sesiones de ejemplo
+      if (MOCK_SESSIONS.length > 0) {
+        // Pre-seleccionar la primera sesión si existe
+        // Esto se puede quitar si no se desea preselección
+        // reset({ sessionId: MOCK_SESSIONS[0].id }); 
+      }
       setIsLoadingSessions(false);
     }, 500);
     return () => clearTimeout(timer);
-  }, []);
+  }, [reset]); // Añadir reset a las dependencias si se usa dentro del useEffect
 
   const onSubmit = async (data: MessageFormValues) => {
     console.log('Form data submitted:', data);
@@ -69,7 +74,12 @@ export default function EnviarMensajePage() {
   };
 
   const handleReset = () => {
-    reset();
+    reset({ 
+        sessionId: '', 
+        recipientPhoneNumber: '', 
+        messageType: 'text', 
+        messageText: '' 
+    });
     toast({
       title: "Formulario restablecido",
       description: "Se han limpiado los campos del formulario.",
@@ -193,7 +203,7 @@ export default function EnviarMensajePage() {
                 <RotateCcw className="mr-2 h-4 w-4" />
                 Restablecimiento
               </Button>
-              <Button type="submit" disabled={isSubmitting || (noSessionsAvailable && sessions.length === 0)} className="w-full sm:w-auto bg-accent text-accent-foreground hover:bg-accent/90">
+              <Button type="submit" disabled={isSubmitting || (noSessionsAvailable && sessions.length === 0 && !control._formValues.sessionId)} className="w-full sm:w-auto bg-accent text-accent-foreground hover:bg-accent/90">
                 <Send className="mr-2 h-4 w-4" />
                 {isSubmitting ? 'Enviando...' : 'Enviar mensaje'}
               </Button>
@@ -204,3 +214,4 @@ export default function EnviarMensajePage() {
     </div>
   );
 }
+    
