@@ -12,15 +12,14 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Send, MessageSquare, RotateCcw, AlertTriangle } from 'lucide-react';
-import type { WhatsAppSession } from '@/types'; // Assuming you have this type
+import type { WhatsAppSession } from '@/types';
 import { useToast } from "@/hooks/use-toast";
 
-// Simulación de datos de sesiones activas. En una app real, esto vendría del backend o de un estado global.
+// Simulación de datos de sesiones activas.
 const MOCK_SESSIONS: WhatsAppSession[] = [
-  // { id: 'session_1', name: 'Mi Cuenta Personal', status: 'conectado', createdAt: new Date().toISOString(), phoneNumber: '+1111111111' },
+  { id: 'session_1', name: 'Mi Cuenta Personal', status: 'conectado', createdAt: new Date().toISOString(), phoneNumber: '+1111111111' },
   // { id: 'session_2', name: 'Cuenta de Empresa', status: 'conectado', createdAt: new Date().toISOString(), phoneNumber: '+2222222222' },
 ];
-
 
 const messageFormSchema = z.object({
   sessionId: z.string().min(1, "Debes seleccionar una sesión"),
@@ -34,7 +33,7 @@ const messageFormSchema = z.object({
 type MessageFormValues = z.infer<typeof messageFormSchema>;
 
 export default function EnviarMensajePage() {
-  const [sessions, setSessions] = useState<WhatsAppSession[]>(MOCK_SESSIONS);
+  const [sessions, setSessions] = useState<WhatsAppSession[]>([]);
   const [isLoadingSessions, setIsLoadingSessions] = useState(true);
   const { toast } = useToast();
 
@@ -51,7 +50,7 @@ export default function EnviarMensajePage() {
   useEffect(() => {
     // Simular carga de sesiones
     const timer = setTimeout(() => {
-      setSessions(MOCK_SESSIONS); // Cargar las sesiones (vacías o no)
+      setSessions(MOCK_SESSIONS); // Cargar las sesiones de ejemplo
       setIsLoadingSessions(false);
     }, 500);
     return () => clearTimeout(timer);
@@ -82,7 +81,7 @@ export default function EnviarMensajePage() {
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
       <h1 className="text-3xl font-bold text-primary mb-8">Enviar mensaje</h1>
-      <Card className="max-w-2xl mx-auto shadow-lg">
+      <Card className="max-w-2xl mx-auto shadow-lg rounded-lg border-border">
         <CardHeader>
           <CardTitle className="text-2xl">Enviar mensaje de WhatsApp</CardTitle>
           <CardDescription>Enviar un mensaje a cualquier número de WhatsApp.</CardDescription>
@@ -101,17 +100,19 @@ export default function EnviarMensajePage() {
                     disabled={isLoadingSessions || noSessionsAvailable || isSubmitting}
                   >
                     <SelectTrigger id="sessionId" aria-label="Seleccionar sesión de WhatsApp">
-                      <SelectValue placeholder={isLoadingSessions ? "Cargando sesiones..." : "Seleccionar una sesión"} />
+                      <SelectValue placeholder={isLoadingSessions ? "Cargando sesiones..." : (noSessionsAvailable ? "No hay sesiones disponibles" : "Seleccionar una sesión")} />
                     </SelectTrigger>
                     <SelectContent>
                       {isLoadingSessions ? (
                         <SelectItem value="loading" disabled>Cargando...</SelectItem>
-                      ) : (
+                      ) : sessions.length > 0 ? (
                         sessions.map(session => (
                           <SelectItem key={session.id} value={session.id}>
                             {session.name} ({session.phoneNumber || 'No conectado'})
                           </SelectItem>
                         ))
+                      ) : (
+                        <SelectItem value="no-sessions" disabled>No hay sesiones disponibles</SelectItem>
                       )}
                     </SelectContent>
                   </Select>
@@ -192,7 +193,7 @@ export default function EnviarMensajePage() {
                 <RotateCcw className="mr-2 h-4 w-4" />
                 Restablecimiento
               </Button>
-              <Button type="submit" disabled={isSubmitting || noSessionsAvailable} className="w-full sm:w-auto bg-accent text-accent-foreground hover:bg-accent/90">
+              <Button type="submit" disabled={isSubmitting || (noSessionsAvailable && sessions.length === 0)} className="w-full sm:w-auto bg-accent text-accent-foreground hover:bg-accent/90">
                 <Send className="mr-2 h-4 w-4" />
                 {isSubmitting ? 'Enviando...' : 'Enviar mensaje'}
               </Button>
