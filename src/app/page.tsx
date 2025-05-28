@@ -25,13 +25,26 @@ export default function ChatPage() {
     setError(null);
     try {
       const data = await fetchConversations();
-      // Filter conversations to include only those where MY_USERNAME is a participant
       const myConversations = data.filter(convo => convo.participants.includes(MY_USERNAME));
       setConversations(myConversations);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Ocurrió un error desconocido';
-      setError(errorMessage);
-      toast({ title: "Error", description: `Error al cargar conversaciones: ${errorMessage}`, variant: "destructive" });
+      const baseTitle = "Error de Red";
+      let descriptionMessage = "Ocurrió un error desconocido al cargar las conversaciones.";
+      
+      if (err instanceof Error) {
+        if (err.message.toLowerCase().includes('failed to fetch')) {
+          descriptionMessage = 'No se pudo conectar al servidor de chat. Verifica que el backend (Replit) esté activo y accesible. Revisa la consola del navegador (Cmd+Opt+J o Ctrl+Shift+J) para detalles técnicos como errores CORS.';
+        } else {
+          descriptionMessage = `Error al cargar conversaciones: ${err.message}`;
+        }
+      }
+      setError(descriptionMessage);
+      toast({ 
+        title: baseTitle, 
+        description: descriptionMessage, 
+        variant: "destructive",
+        duration: 10000 
+      });
     } finally {
       setIsLoading(false);
     }
@@ -52,7 +65,7 @@ export default function ChatPage() {
     if (!currentConversation) return;
 
     const newMessage: Message = {
-      id: Date.now().toString(), // Client-generated ID, backend might re-assign
+      id: Date.now().toString(),
       sender: MY_USERNAME,
       text,
       timestamp: new Date().toISOString(),
@@ -64,18 +77,26 @@ export default function ChatPage() {
     };
 
     try {
-      // Optimistically update UI
       setConversations(prev => prev.map(c => c.id === selectedConversationId ? updatedConversation : c));
-      
       await apiSendMessage(selectedConversationId, updatedConversation);
-      // Optionally, re-fetch or update with server response if IDs change, etc.
-      // For now, optimistic update is fine given the backend might be simple.
-      // loadConversations(); // Or update specific conversation
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Ocurrió un error desconocido';
-      setError(`Error al enviar mensaje: ${errorMessage}`);
-      toast({ title: "Error", description: `Error al enviar mensaje: ${errorMessage}`, variant: "destructive" });
-      // Revert optimistic update if needed
+      const baseTitle = "Error al Enviar Mensaje";
+      let descriptionMessage = "No se pudo enviar el mensaje. Intenta de nuevo.";
+      
+      if (err instanceof Error) {
+        if (err.message.toLowerCase().includes('failed to fetch')) {
+          descriptionMessage = 'Error de red al enviar mensaje. Verifica tu conexión y que el backend (Replit) esté activo. Revisa la consola del navegador para más detalles.';
+        } else {
+          descriptionMessage = `Error al enviar mensaje: ${err.message}`;
+        }
+      }
+      setError(descriptionMessage);
+      toast({ 
+        title: baseTitle, 
+        description: descriptionMessage, 
+        variant: "destructive",
+        duration: 10000 
+      });
       setConversations(prev => prev.map(c => c.id === selectedConversationId ? currentConversation : c));
     }
   };
@@ -115,9 +136,23 @@ export default function ChatPage() {
       setSelectedConversationId(createdConvo.id);
       toast({ title: "Éxito", description: `Conversación con ${recipientName} creada.`, variant: "default" });
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Ocurrió un error desconocido';
-      setError(`Error al crear conversación: ${errorMessage}`);
-      toast({ title: "Error", description: `Error al crear conversación: ${errorMessage}`, variant: "destructive" });
+      const baseTitle = "Error al Crear Conversación";
+      let descriptionMessage = "No se pudo crear la conversación. Intenta de nuevo.";
+      
+      if (err instanceof Error) {
+        if (err.message.toLowerCase().includes('failed to fetch')) {
+          descriptionMessage = 'Error de red al crear conversación. Verifica tu conexión y que el backend (Replit) esté activo. Revisa la consola del navegador para más detalles.';
+        } else {
+          descriptionMessage = `Error al crear conversación: ${err.message}`;
+        }
+      }
+      setError(descriptionMessage); 
+      toast({ 
+        title: baseTitle, 
+        description: descriptionMessage, 
+        variant: "destructive",
+        duration: 10000
+      });
     } finally {
       setIsLoading(false);
     }
