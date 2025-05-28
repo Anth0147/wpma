@@ -37,7 +37,7 @@ export default function EnviarMensajePage() {
   const [isLoadingSessions, setIsLoadingSessions] = useState(true);
   const { toast } = useToast();
 
-  const { control, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<MessageFormValues>({
+  const { control, handleSubmit, reset, formState: { errors, isSubmitting }, setValue } = useForm<MessageFormValues>({
     resolver: zodResolver(messageFormSchema),
     defaultValues: {
       sessionId: '',
@@ -50,16 +50,16 @@ export default function EnviarMensajePage() {
   useEffect(() => {
     // Simular carga de sesiones
     const timer = setTimeout(() => {
-      setSessions(MOCK_SESSIONS); // Cargar las sesiones de ejemplo
+      setSessions(MOCK_SESSIONS);
       if (MOCK_SESSIONS.length > 0) {
         // Pre-seleccionar la primera sesión si existe
-        // Esto se puede quitar si no se desea preselección
-        // reset({ sessionId: MOCK_SESSIONS[0].id }); 
+        // Si no deseas preselección, comenta o elimina la siguiente línea:
+        // setValue('sessionId', MOCK_SESSIONS[0].id);
       }
       setIsLoadingSessions(false);
     }, 500);
     return () => clearTimeout(timer);
-  }, [reset]); // Añadir reset a las dependencias si se usa dentro del useEffect
+  }, [setValue]);
 
   const onSubmit = async (data: MessageFormValues) => {
     console.log('Form data submitted:', data);
@@ -70,22 +70,22 @@ export default function EnviarMensajePage() {
       description: `Mensaje enviado a ${data.recipientPhoneNumber} usando la sesión ${data.sessionId}.`,
     });
     // Opcional: resetear el formulario después de enviar
-    // reset(); 
+    // reset();
   };
 
   const handleReset = () => {
-    reset({ 
-        sessionId: '', 
-        recipientPhoneNumber: '', 
-        messageType: 'text', 
-        messageText: '' 
+    reset({
+        sessionId: MOCK_SESSIONS.length > 0 ? control._formValues.sessionId : '', // Mantener la sesión seleccionada si hay, o limpiar
+        recipientPhoneNumber: '',
+        messageType: 'text',
+        messageText: ''
     });
     toast({
       title: "Formulario restablecido",
       description: "Se han limpiado los campos del formulario.",
     });
   };
-  
+
   const noSessionsAvailable = !isLoadingSessions && sessions.length === 0;
 
   return (
@@ -203,7 +203,7 @@ export default function EnviarMensajePage() {
                 <RotateCcw className="mr-2 h-4 w-4" />
                 Restablecimiento
               </Button>
-              <Button type="submit" disabled={isSubmitting || (noSessionsAvailable && sessions.length === 0 && !control._formValues.sessionId)} className="w-full sm:w-auto bg-accent text-accent-foreground hover:bg-accent/90">
+              <Button type="submit" disabled={isSubmitting || (noSessionsAvailable && !control._formValues.sessionId)} className="w-full sm:w-auto bg-accent text-accent-foreground hover:bg-accent/90">
                 <Send className="mr-2 h-4 w-4" />
                 {isSubmitting ? 'Enviando...' : 'Enviar mensaje'}
               </Button>
@@ -214,4 +214,3 @@ export default function EnviarMensajePage() {
     </div>
   );
 }
-    
