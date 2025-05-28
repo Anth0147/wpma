@@ -37,7 +37,7 @@ export default function EnviarMensajePage() {
   const [isLoadingSessions, setIsLoadingSessions] = useState(true);
   const { toast } = useToast();
 
-  const { control, handleSubmit, reset, formState: { errors, isSubmitting }, setValue } = useForm<MessageFormValues>({
+  const { control, handleSubmit, reset, formState: { errors, isSubmitting }, setValue, getValues } = useForm<MessageFormValues>({
     resolver: zodResolver(messageFormSchema),
     defaultValues: {
       sessionId: '',
@@ -74,8 +74,9 @@ export default function EnviarMensajePage() {
   };
 
   const handleReset = () => {
+    const currentSessionId = getValues('sessionId');
     reset({
-        sessionId: MOCK_SESSIONS.length > 0 ? control._formValues.sessionId : '', // Mantener la sesión seleccionada si hay, o limpiar
+        sessionId: MOCK_SESSIONS.length > 0 ? currentSessionId : '', // Mantener la sesión seleccionada si hay, o limpiar
         recipientPhoneNumber: '',
         messageType: 'text',
         messageText: ''
@@ -203,7 +204,7 @@ export default function EnviarMensajePage() {
                 <RotateCcw className="mr-2 h-4 w-4" />
                 Restablecimiento
               </Button>
-              <Button type="submit" disabled={isSubmitting || (noSessionsAvailable && !control._formValues.sessionId)} className="w-full sm:w-auto bg-accent text-accent-foreground hover:bg-accent/90">
+              <Button type="submit" disabled={isSubmitting || (noSessionsAvailable && !getValues('sessionId'))} className="w-full sm:w-auto bg-accent text-accent-foreground hover:bg-accent/90">
                 <Send className="mr-2 h-4 w-4" />
                 {isSubmitting ? 'Enviando...' : 'Enviar mensaje'}
               </Button>
